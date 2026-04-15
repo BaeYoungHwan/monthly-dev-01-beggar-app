@@ -3,12 +3,16 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+type Mode = 'login' | 'signup'
+
 export default function LoginPage() {
+  const [mode, setMode] = useState<Mode>('login')
   const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [socialLoading, setSocialLoading] = useState<'google' | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [signupDone, setSignupDone] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -16,18 +20,23 @@ export default function LoginPage() {
     setError(null)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
 
-    if (error) {
-      setError(error.message)
+    if (mode === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) setError('이메일 또는 비밀번호가 올바르지 않습니다.')
     } else {
-      setSubmitted(true)
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        setSignupDone(true)
+      }
     }
+
     setLoading(false)
   }
 
@@ -37,9 +46,7 @@ export default function LoginPage() {
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
     if (error) {
       setError(error.message)
@@ -47,21 +54,21 @@ export default function LoginPage() {
     }
   }
 
-  if (submitted) {
+  if (signupDone) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-6 gap-6">
         <div className="text-6xl">📬</div>
-        <h2 className="text-xl font-bold text-center">링크를 확인하세요</h2>
+        <h2 className="text-xl font-bold text-center">이메일을 확인하세요</h2>
         <p className="text-zinc-400 text-center text-sm">
           <span className="text-white font-medium">{email}</span>으로<br />
-          로그인 링크를 보냈습니다.<br />
-          메일함을 확인해 주세요.
+          인증 링크를 보냈습니다.<br />
+          메일함을 확인한 뒤 로그인해 주세요.
         </p>
         <button
-          onClick={() => setSubmitted(false)}
+          onClick={() => { setSignupDone(false); setMode('login') }}
           className="text-zinc-500 text-sm underline"
         >
-          다시 시도
+          로그인 화면으로
         </button>
       </div>
     )
@@ -100,7 +107,27 @@ export default function LoginPage() {
         <div className="flex-1 h-px bg-zinc-800" />
       </div>
 
-      {/* 이메일 로그인 */}
+      {/* 로그인 / 회원가입 탭 */}
+      <div className="w-full flex bg-zinc-900 rounded-xl p-1 -mt-4">
+        <button
+          onClick={() => { setMode('login'); setError(null) }}
+          className={`flex-1 py-2 rounded-lg text-sm font-bold transition-colors ${
+            mode === 'login' ? 'bg-zinc-700 text-white' : 'text-zinc-500'
+          }`}
+        >
+          로그인
+        </button>
+        <button
+          onClick={() => { setMode('signup'); setError(null) }}
+          className={`flex-1 py-2 rounded-lg text-sm font-bold transition-colors ${
+            mode === 'signup' ? 'bg-zinc-700 text-white' : 'text-zinc-500'
+          }`}
+        >
+          회원가입
+        </button>
+      </div>
+
+      {/* 이메일 + 비밀번호 폼 */}
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3 -mt-4">
         <input
           type="email"
@@ -108,6 +135,15 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="이메일 주소"
           required
+          className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호"
+          required
+          minLength={6}
           className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400"
         />
         {error && (
@@ -118,13 +154,9 @@ export default function LoginPage() {
           disabled={loading || socialLoading !== null}
           className="w-full bg-zinc-800 border border-zinc-700 text-white font-bold py-3 rounded-xl disabled:opacity-50"
         >
-          {loading ? '전송 중...' : '매직링크로 로그인'}
+          {loading ? '처리 중...' : mode === 'login' ? '로그인' : '회원가입'}
         </button>
       </form>
-
-      <p className="text-zinc-600 text-xs text-center -mt-4">
-        비밀번호 없이 이메일 링크 하나로 로그인됩니다
-      </p>
     </div>
   )
 }
@@ -139,4 +171,3 @@ function GoogleIcon() {
     </svg>
   )
 }
-
