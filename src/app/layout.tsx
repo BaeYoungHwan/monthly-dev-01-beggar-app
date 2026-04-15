@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist } from 'next/font/google'
 import './globals.css'
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 
 const geist = Geist({
   variable: '--font-geist',
@@ -32,6 +33,7 @@ export default function RootLayout({
         <main className="max-w-md mx-auto min-h-screen">
           {children}
         </main>
+        <ServiceWorkerRegister />
       </body>
     </html>
   )

@@ -13,6 +13,16 @@ export default function NagResult({ nagResult, personaId, onReset }: NagResultPr
   const router = useRouter()
   const persona = PERSONAS.find(p => p.id === personaId) ?? PERSONAS[0]!
 
+  async function handleShare() {
+    const text = `${persona.emoji} 동결거지한테 혼났다\n\n"${nagResult}"\n\n나도 해볼래? → https://monthly-dev-01-beggar-app.vercel.app`
+    if (navigator.share) {
+      await navigator.share({ text }).catch(() => {})
+    } else {
+      await navigator.clipboard.writeText(text).catch(() => {})
+      alert('클립보드에 복사됐습니다!')
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 gap-8">
       {/* 페르소나 이모지 */}
@@ -30,6 +40,12 @@ export default function NagResult({ nagResult, personaId, onReset }: NagResultPr
 
       {/* 버튼 */}
       <div className="w-full flex flex-col gap-3">
+        <button
+          onClick={handleShare}
+          className="w-full bg-zinc-800 border border-zinc-700 text-white font-bold py-3 rounded-xl text-sm"
+        >
+          📤 이 잔소리 공유하기
+        </button>
         <button
           onClick={() => router.push('/dashboard')}
           className="w-full bg-white text-zinc-950 font-bold py-3 rounded-xl"

@@ -1,0 +1,21 @@
+{
+  "name": "동결거지 — AI 절약 도우미",
+  "short_name": "동결거지",
+  "description": "AI의 독설과 게이미피케이션으로 지출을 억제하는 초절약 보조 앱",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["finance", "lifestyle"]
+}

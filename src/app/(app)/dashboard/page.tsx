@@ -25,9 +25,14 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-black">동결거지</h1>
           <p className="text-zinc-500 text-xs mt-0.5">{user.email}</p>
         </div>
-        <Link href="/settings" className="text-zinc-400 hover:text-white transition-colors" aria-label="설정">
-          ⚙️
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/leaderboard" className="text-zinc-400 hover:text-white transition-colors" aria-label="리더보드">
+            🏆
+          </Link>
+          <Link href="/settings" className="text-zinc-400 hover:text-white transition-colors" aria-label="설정">
+            ⚙️
+          </Link>
+        </div>
       </div>
 
       {/* 의심스러운 거지 배지 (3일 이상 미체크인) */}

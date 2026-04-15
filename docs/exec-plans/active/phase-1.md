@@ -64,6 +64,26 @@
 
 ---
 
+---
+
+## P2 구현 완료 항목
+
+- [x] `public/manifest.json` + `public/sw.js` — PWA 기초 (manifest + 서비스워커)
+- [x] `src/components/ServiceWorkerRegister.tsx` — SW 클라이언트 등록
+- [x] `src/lib/supabase/admin.ts` — service_role 관리자 클라이언트
+- [x] `src/app/api/cron/aggregate/route.ts` — daily_aggregates 자정 배치
+- [x] `vercel.json` — Vercel Cron 스케줄 (00:00 KST)
+- [x] `src/app/actions/leaderboard.ts` — 리더보드 데이터 (명예+굴욕의 전당)
+- [x] `src/app/(app)/leaderboard/page.tsx` + `LeaderboardCard.tsx` — 리더보드 UI
+- [x] `NagResult.tsx` — 잔소리 공유 버튼 (navigator.share / clipboard)
+
+## 미완료 (사용자 직접 필요)
+- [ ] Vercel 환경변수: `CRON_SECRET` 설정
+- [ ] 모바일 실기기 테스트 (iOS Safari, Android Chrome)
+- [ ] html2canvas PNG 캡처 (승인 시 추가)
+- [ ] 고급 신뢰 시스템 (영수증 OCR 등) → P3
+
 ## 관련 커밋
 
-- `e3a5600` — feat: P1 MVP 핵심 기능 전체 구현 (develop 브랜치)
+- `e3a5600` — feat: P1 MVP 핵심 기능 전체 구현
+- `78bac13` — feat: P1 잔여 기능 + 보안 수정

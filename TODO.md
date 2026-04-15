@@ -85,20 +85,20 @@
 ## P2 — 검증 및 배포
 
 ### 리더보드 (유저 100명+ 이후)
-- [ ] 명예의 전당 — 주간 체크인 × 절약율 상위 1~3위
-- [ ] 굴욕의 전당 — 주간 과소비 1~3위 (투표 시스템)
-- [ ] `daily_aggregates` 자정 배치 자동화 (Supabase Cron 또는 Vercel Cron)
+- [x] 명예의 전당 — 주간 체크인 × 절약율 상위 1~3위
+- [x] 굴욕의 전당 — 주간 과소비 1~3위 (자동 랭킹; 투표 시스템은 P3)
+- [x] `daily_aggregates` 자정 배치 자동화 (Vercel Cron `/api/cron/aggregate`, 매일 00:00 KST)
 
-### 고급 신뢰 시스템 (P2)
-- [ ] 영수증 OCR (Gemini Vision API)
-- [ ] 0원 인증샷 커뮤니티 승인
-- [ ] 정직도 점수 (30일 이상 데이터 기반 패턴 분석)
+### 고급 신뢰 시스템 (P3으로 이관)
+- [ ] 영수증 OCR (Gemini Vision API) — P3
+- [ ] 0원 인증샷 커뮤니티 승인 — P3
+- [ ] 정직도 점수 (30일 이상 데이터 기반 패턴 분석) — P3
 
 ### 검증 및 배포
 - [ ] 모바일 실기기 테스트 (iOS Safari, Android Chrome)
-- [ ] PWA 설정 (`manifest.json`, 서비스워커 기초)
-- [ ] Gemini API 응답 시간 2초 이내 검증
-- [ ] Supabase RLS 보안 검증 (타 유저 데이터 접근 불가 확인)
-- [ ] Vercel Production 배포
-- [ ] KPI 측정 기준 설정 (사용자 수, 주간 입력 횟수, 공유 이벤트)
-- [ ] SNS 공유 기능 추가 (잔소리 결과 이미지 캡처 공유)
+- [x] PWA 설정 (`manifest.json`, 서비스워커 기초)
+- [x] Gemini API 응답 시간 2초 이내 검증 (gemini-2.5-flash, 브라우저 테스트 통과)
+- [x] Supabase RLS 보안 검증 (security-guard 에이전트 + 코드 수정)
+- [x] Vercel Production 배포 (https://monthly-dev-01-beggar-app.vercel.app)
+- [x] KPI 측정 기준 설정 — waitlist 전환율·지출 입력 횟수·체크인 streak를 기존 테이블로 집계
+- [x] SNS 공유 기능 추가 (NagResult 공유 버튼 — navigator.share / clipboard fallback)
