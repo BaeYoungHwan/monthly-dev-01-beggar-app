@@ -32,53 +32,53 @@
 - [x] 매직링크 로그인 실제 동작 확인
 - [ ] Gemini API 키 발급 및 `.env.local` 추가
 - [ ] Gemini 연동 확인 (응답 2초 이내)
-- [ ] Vercel 배포 파이프라인 초안 (GitHub 연동)
-- [ ] Hello World 확인 (Vercel 미리보기 URL 접속 가능)
+- [x] Vercel 배포 파이프라인 (GitHub main/develop 브랜치 연동)
+- [x] Hello World 확인 (https://monthly-dev-01-beggar-app.vercel.app)
 
 ---
 
 ## P1 — MVP 핵심 기능
 
 ### 인증
-- [ ] 매직링크 로그인 페이지 UI
-- [ ] 로그인 후 리다이렉트 및 세션 유지 처리
+- [x] 매직링크 로그인 페이지 UI
+- [x] 로그인 후 리다이렉트 및 세션 유지 처리
 
 ### AI 등짝 스매싱
-- [ ] 지출 입력 폼 UI (금액, 카테고리, 메모)
-- [ ] Gemini API 잔소리 생성 서버 액션 (페르소나별 프롬프트)
-- [ ] 잔소리 결과 표시 컴포넌트 (B급 감성 애니메이션 포함)
-- [ ] 지출 데이터 Supabase 저장
+- [x] 지출 입력 폼 UI (금액, 카테고리, 메모) — `src/app/(app)/expense/new/page.tsx`
+- [x] Gemini API 잔소리 생성 서버 액션 (페르소나별 프롬프트) — `src/app/actions/expense.ts`
+- [x] 잔소리 결과 표시 컴포넌트 (B급 감성 애니메이션 포함) — `src/components/NagResult.tsx`
+- [x] 지출 데이터 Supabase 저장
 
 ### 지출 대시보드
-- [ ] 일간/주간 지출 합계 조회
-- [ ] 지출 내역 리스트 컴포넌트
+- [x] 일간/주간 지출 합계 조회 — `src/app/actions/dashboard.ts`
+- [x] 지출 내역 리스트 컴포넌트 — `src/components/ExpenseList.tsx`
 - [ ] 일일 예산 목표 설정 UI
 
 ### 거지 등급 시스템
-- [ ] 등급 계산 로직: `(일일 예산 - 실지출) × 연속 체크인 일수`
-- [ ] 등급 테이블 및 배지 데이터 정의 (Lv 0 파산핑 ~ Lv MAX 무소유의 화신)
-- [ ] 등급 표시 컴포넌트 (캐릭터 이미지 + 칭호)
+- [x] 등급 계산 로직: `(일일 예산 - 실지출) × 연속 체크인 일수`
+- [x] 등급 테이블 및 배지 데이터 정의 (Lv 0 파산핑 ~ Lv MAX 무소유의 화신)
+- [x] 등급 표시 컴포넌트 (캐릭터 이미지 + 칭호) — `src/components/GradeCard.tsx`
 - [ ] 등급 변화 시 애니메이션/효과
 
 ### 어뷰징 방지 + 활동 신뢰 시스템
-- [ ] 생존 신고 버튼 UI (`CheckinBanner.tsx`) — 오늘 체크인 없을 때만 노출
-- [ ] `app/actions/checkin.ts` — 체크인 Server Action (no_spend / with_spend)
-- [ ] 지출 입력 시 자동 체크인 연동 (`with_spend` 타입)
-- [ ] AI 탐정 모드 — 오후 2시 이후 무체크인 접속 시 의심 잔소리 배너
+- [x] 생존 신고 버튼 UI (`CheckinBanner.tsx`) — 오늘 체크인 없을 때만 노출
+- [x] `app/actions/checkin.ts` — 체크인 Server Action (no_spend / with_spend)
+- [x] 지출 입력 시 자동 체크인 연동 (`with_spend` 타입)
+- [x] AI 탐정 모드 — 오후 2시 이후 무체크인 접속 시 의심 잔소리 배너 — `src/components/DetectiveBanner.tsx`
 - [ ] "의심스러운 거지" 배지 (3일 이상 무체크인 접속 시)
 
 ### 비교 통계 모듈
-- [ ] `lib/grade/percentile.ts` — 백분위 계산 + 가상 데이터(30명 미만) 혼합 로직
-- [ ] `app/actions/stats.ts` — 오늘 평균/백분위 Server Action
-- [ ] 거지 백분위 표시 컴포넌트 ("상위 5% 청렴한 거지")
-- [ ] 전체 유저 평균 비교 표시 (평균 대비 +/- % 및 금액)
+- [x] `lib/grade/percentile.ts` — 백분위 계산 + 가상 데이터(30명 미만) 혼합 로직
+- [x] `app/actions/stats.ts` — 오늘 평균/백분위 Server Action
+- [x] 거지 백분위 표시 컴포넌트 ("상위 5% 청렴한 거지") — `src/components/PercentileCard.tsx`
+- [x] 전체 유저 평균 비교 표시 (평균 대비 +/- % 및 금액)
 - [ ] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입
-- [ ] SNS 공유 카드 UI (백분위 + 등급 + 한 줄 잔소리)
+- [x] SNS 공유 카드 UI (백분위 + 등급 + 한 줄 잔소리) — `src/components/ShareCard.tsx`
 - [ ] 공유 카드 PNG 캡처 기능 (`html2canvas` 또는 `dom-to-image-more` — 추가 전 승인)
 
 ### 수익화 기초 (수요 검증)
-- [ ] 유료 페르소나 카드 UI (잠금 처리)
-- [ ] "다음 업데이트 예약" 버튼 및 관심 유저 데이터 저장
+- [x] 유료 페르소나 카드 UI (잠금 처리) — `src/components/PersonaLockedCard.tsx`
+- [x] "다음 업데이트 예약" 버튼 및 관심 유저 데이터 저장 — `src/app/actions/waitlist.ts`
 
 ---
 

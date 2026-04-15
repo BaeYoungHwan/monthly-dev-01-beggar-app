@@ -1,20 +1,66 @@
-import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getDashboardData } from '@/app/actions/dashboard'
+import GradeCard from '@/components/GradeCard'
+import ExpenseList from '@/components/ExpenseList'
+import CheckinBanner from '@/components/CheckinBanner'
+import DetectiveBanner from '@/components/DetectiveBanner'
+import PercentileCard from '@/components/PercentileCard'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect('/login')
-  }
+  if (!user) redirect('/login')
+
+  const data = await getDashboardData()
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-6 gap-4">
-      <div className="text-5xl">🧎</div>
-      <h1 className="text-xl font-bold">로그인 성공!</h1>
-      <p className="text-zinc-400 text-sm">{user.email}</p>
-      <p className="text-zinc-600 text-xs">대시보드 구현 중...</p>
+    <div className="flex flex-col min-h-screen px-6 pt-12 pb-28 gap-6">
+      {/* 헤더 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black">동결거지</h1>
+          <p className="text-zinc-500 text-xs mt-0.5">{user.email}</p>
+        </div>
+        <span className="text-3xl">🧎</span>
+      </div>
+
+      {/* AI 탐정 배너 (오후 2시 이후 + 미체크인) */}
+      <DetectiveBanner hasCheckinToday={data.hasCheckinToday} />
+
+      {/* 생존 신고 배너 */}
+      <CheckinBanner hasCheckinToday={data.hasCheckinToday} />
+
+      {/* 등급 카드 */}
+      <GradeCard
+        dailyBudget={data.profile.daily_budget}
+        todayTotal={data.todayTotal}
+        checkinStreak={data.profile.checkin_streak}
+      />
+
+      {/* 비교 통계 */}
+      <PercentileCard todayTotal={data.todayTotal} />
+
+      {/* 지출 내역 */}
+      <ExpenseList
+        expenses={data.todayExpenses}
+        todayTotal={data.todayTotal}
+        weekTotal={data.weekTotal}
+      />
+
+      {/* FAB — 지출 입력 */}
+      <Link
+        href="/expense/new"
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-sm bg-white text-zinc-950 font-black py-4 rounded-2xl text-center text-lg shadow-lg"
+      >
+        🪖 지출 입력
+      </Link>
     </div>
   )
+}
+
+export function generateMetadata() {
+  return { title: '동결거지 대시보드' }
 }

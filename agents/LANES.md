@@ -64,3 +64,5 @@ model: sonnet
 | `example-agent.md` | - | sonnet | 템플릿 |
 | `code-reviewer.md` | Review | sonnet | 활성 |
 | `doc-gardener.md` | Review | haiku | 활성 |
+| `security-guard.md` | Review | sonnet | 활성 |
+| `deploy-checker.md` | Build | haiku | 활성 |
