@@ -7,7 +7,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [socialLoading, setSocialLoading] = useState<'google' | 'kakao' | null>(null)
+  const [socialLoading, setSocialLoading] = useState<'google' | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -31,7 +31,7 @@ export default function LoginPage() {
     setLoading(false)
   }
 
-  async function handleSocialLogin(provider: 'google' | 'kakao') {
+  async function handleSocialLogin(provider: 'google') {
     setSocialLoading(provider)
     setError(null)
     const supabase = createClient()
@@ -39,10 +39,6 @@ export default function LoginPage() {
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
-        ...(provider === 'kakao' && {
-          scopes: 'profile_nickname profile_image',
-          queryParams: { scope: 'profile_nickname profile_image' },
-        }),
       },
     })
     if (error) {
@@ -95,21 +91,6 @@ export default function LoginPage() {
             </>
           )}
         </button>
-
-        <button
-          onClick={() => handleSocialLogin('kakao')}
-          disabled={socialLoading !== null}
-          className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#191919] font-bold py-3 rounded-xl disabled:opacity-50"
-        >
-          {socialLoading === 'kakao' ? (
-            <span>로그인 중...</span>
-          ) : (
-            <>
-              <KakaoIcon />
-              <span>카카오로 로그인</span>
-            </>
-          )}
-        </button>
       </div>
 
       {/* 구분선 */}
@@ -159,10 +140,3 @@ function GoogleIcon() {
   )
 }
 
-function KakaoIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path fillRule="evenodd" clipRule="evenodd" d="M9 1C4.582 1 1 3.806 1 7.273c0 2.195 1.417 4.125 3.563 5.234l-.907 3.384c-.08.298.27.534.524.356l4.07-2.72c.247.018.497.027.75.027 4.418 0 8-2.806 8-6.281C17 3.806 13.418 1 9 1Z" fill="#191919"/>
-    </svg>
-  )
-}
