@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createExpense } from '@/app/actions/expense'
+import { extractReceiptData } from '@/app/actions/ocr'
 import { EXPENSE_CATEGORY_LABELS, type ExpenseCategory } from '@/types/expense'
 import { PERSONAS } from '@/types/persona'
 import NagResult from '@/components/NagResult'
@@ -13,13 +14,48 @@ const CATEGORIES = Object.entries(EXPENSE_CATEGORY_LABELS) as [ExpenseCategory, 
 export default function NewExpensePage() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [isOcrPending, startOcrTransition] = useTransition()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState<ExpenseCategory | null>(null)
   const [memo, setMemo] = useState('')
   const [personaId, setPersonaId] = useState('drill_sergeant')
   const [error, setError] = useState<string | null>(null)
+  const [ocrMessage, setOcrMessage] = useState<string | null>(null)
   const [result, setResult] = useState<{ nagResult: string; personaId: string } | null>(null)
+
+  function handleReceiptUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      const [header, base64] = dataUrl.split(',')
+      const mimeType = header?.match(/:(.*?);/)?.[1] ?? 'image/jpeg'
+      if (!base64) return
+
+      setOcrMessage('영수증 분석 중...')
+      startOcrTransition(async () => {
+        try {
+          const ocr = await extractReceiptData(base64, mimeType)
+          if (ocr.amount) setAmount(String(ocr.amount))
+          if (ocr.category) setCategory(ocr.category)
+          setOcrMessage(
+            ocr.amount
+              ? `✅ ${ocr.amount.toLocaleString()}원 인식됨 (${ocr.confidence === 'high' ? '높음' : '낮음'})`
+              : '❌ 금액을 인식하지 못했어요. 직접 입력해 주세요.'
+          )
+        } catch (err) {
+          setOcrMessage(err instanceof Error ? `❌ ${err.message}` : '❌ OCR 오류가 발생했습니다')
+        }
+      })
+    }
+    reader.readAsDataURL(file)
+    // 같은 파일 재선택 허용
+    e.target.value = ''
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -75,6 +111,28 @@ export default function NewExpensePage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-8 flex-1">
+        {/* 영수증 OCR */}
+        <div className="flex flex-col gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleReceiptUpload}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isOcrPending}
+            className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-600 rounded-xl py-3 text-sm text-zinc-400 hover:border-zinc-400 hover:text-zinc-300 transition-colors disabled:opacity-50"
+          >
+            {isOcrPending ? '⏳ 분석 중...' : '📷 영수증 인식으로 자동 입력'}
+          </button>
+          {ocrMessage && (
+            <p className="text-xs text-zinc-400 text-center">{ocrMessage}</p>
+          )}
+        </div>
+
         {/* 금액 입력 */}
         <div className="flex flex-col gap-2">
           <label className="text-zinc-400 text-sm">얼마 썼어?</label>

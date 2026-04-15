@@ -8,6 +8,7 @@ import CheckinBanner from '@/components/CheckinBanner'
 import DetectiveBanner from '@/components/DetectiveBanner'
 import PercentileCard from '@/components/PercentileCard'
 import SuspiciousBadge from '@/components/SuspiciousBadge'
+import HonestyScore from '@/components/HonestyScore'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -53,6 +54,9 @@ export default async function DashboardPage() {
 
       {/* 비교 통계 */}
       <PercentileCard todayTotal={data.todayTotal} />
+
+      {/* 정직도 점수 */}
+      <HonestyScore />
 
       {/* 지출 내역 */}
       <ExpenseList

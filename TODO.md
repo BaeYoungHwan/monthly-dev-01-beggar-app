@@ -74,7 +74,7 @@
 - [x] 전체 유저 평균 비교 표시 (평균 대비 +/- % 및 금액)
 - [x] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입
 - [x] SNS 공유 카드 UI (백분위 + 등급 + 한 줄 잔소리) — `src/components/ShareCard.tsx`
-- [ ] 공유 카드 PNG 캡처 기능 (`html2canvas` 또는 `dom-to-image-more` — 추가 전 승인)
+- [x] 공유 카드 PNG 캡처 기능 (`html2canvas` — `ShareCard.tsx` 📸 PNG 저장 버튼 추가)
 
 ### 수익화 기초 (수요 검증)
 - [x] 유료 페르소나 카드 UI (잠금 처리) — `src/components/PersonaLockedCard.tsx`
@@ -89,10 +89,10 @@
 - [x] 굴욕의 전당 — 주간 과소비 1~3위 (자동 랭킹; 투표 시스템은 P3)
 - [x] `daily_aggregates` 자정 배치 자동화 (Vercel Cron `/api/cron/aggregate`, 매일 00:00 KST)
 
-### 고급 신뢰 시스템 (P3으로 이관)
-- [ ] 영수증 OCR (Gemini Vision API) — P3
-- [ ] 0원 인증샷 커뮤니티 승인 — P3
-- [ ] 정직도 점수 (30일 이상 데이터 기반 패턴 분석) — P3
+### 고급 신뢰 시스템 (P3)
+- [x] 영수증 OCR (Gemini Vision API) — `src/app/actions/ocr.ts` + 지출 입력 폼 통합
+- [ ] 0원 인증샷 커뮤니티 승인 — 유저 100명+ 이후
+- [x] 정직도 점수 (체크인 일관성 40% + 예산 준수율 40% + 지출 안정성 20%) — `src/components/HonestyScore.tsx`
 
 ### 검증 및 배포
 - [ ] 모바일 실기기 테스트 (iOS Safari, Android Chrome)

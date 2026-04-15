@@ -35,6 +35,24 @@ export default function ShareCard({
     }
   }
 
+  async function handleCapture() {
+    const el = document.getElementById('share-card')
+    if (!el) return
+    const html2canvas = (await import('html2canvas')).default
+    const canvas = await html2canvas(el, {
+      backgroundColor: '#18181b',
+      scale: 2,
+      useCORS: true,
+    })
+    const url = canvas.toDataURL('image/png')
+    const a = document.createElement('a')
+    a.href = url
+    a.download = '동결거지_공유카드.png'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
   return (
     <div className="flex flex-col gap-3">
       {/* 공유 카드 미리보기 */}
@@ -63,13 +81,21 @@ export default function ShareCard({
         <p className="text-xs text-zinc-600">monthly-dev-01-beggar-app.vercel.app</p>
       </div>
 
-      {/* 공유 버튼 */}
-      <button
-        onClick={handleShare}
-        className="w-full bg-zinc-800 border border-zinc-700 text-white font-bold py-3 rounded-xl text-sm"
-      >
-        📤 공유하기
-      </button>
+      {/* 버튼 그룹 */}
+      <div className="flex gap-2">
+        <button
+          onClick={handleCapture}
+          className="flex-1 bg-zinc-800 border border-zinc-700 text-white font-bold py-3 rounded-xl text-sm"
+        >
+          📸 PNG 저장
+        </button>
+        <button
+          onClick={handleShare}
+          className="flex-1 bg-zinc-800 border border-zinc-700 text-white font-bold py-3 rounded-xl text-sm"
+        >
+          📤 공유하기
+        </button>
+      </div>
     </div>
   )
 }

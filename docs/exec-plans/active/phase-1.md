@@ -42,7 +42,7 @@
 - [x] 등급 변화 시 애니메이션/효과 (localStorage 기반 레벨업 감지 + 🎉 오버레이)
 - [x] "의심스러운 거지" 배지 (`src/components/SuspiciousBadge.tsx`)
 - [x] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입 (expense.ts buildNagPrompt)
-- [ ] 공유 카드 PNG 캡처 기능 (html2canvas — 승인 필요)
+- [x] 공유 카드 PNG 캡처 기능 (html2canvas — `ShareCard.tsx` handleCapture 추가)
 
 ## 보안 수정 (에이전트 리뷰 반영)
 - [x] `waitlist.ts` — 이메일 regex 검증 + personaId 화이트리스트 + upsert 전환
