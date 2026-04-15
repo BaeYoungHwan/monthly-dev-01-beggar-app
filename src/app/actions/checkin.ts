@@ -2,44 +2,33 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { updateStreak } from '@/lib/streak/updateStreak'
 
-export async function checkin(type: 'no_spend' | 'with_spend'): Promise<void> {
+const VALID_CHECKIN_TYPES = ['no_spend', 'with_spend'] as const
+type CheckinType = typeof VALID_CHECKIN_TYPES[number]
+
+export async function checkin(type: CheckinType): Promise<void> {
+  if (!VALID_CHECKIN_TYPES.includes(type)) {
+    throw new Error('유효하지 않은 체크인 타입입니다')
+  }
+
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-  if (!user) throw new Error('인증이 필요합니다')
+  if (authError || !user) throw new Error('인증이 필요합니다')
 
   const today = new Date().toISOString().split('T')[0]!
-  const yesterday = new Date(Date.now() - 86_400_000).toISOString().split('T')[0]!
 
-  // daily_checkins UPSERT
-  await supabase
+  const { error: checkinError } = await supabase
     .from('daily_checkins')
     .upsert(
       { user_id: user.id, checkin_date: today, checkin_type: type },
       { onConflict: 'user_id,checkin_date' }
     )
 
-  // profiles.checkin_streak 업데이트
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('checkin_streak, last_checkin_date')
-    .eq('id', user.id)
-    .single()
+  if (checkinError) console.error('[checkin] daily_checkins 업데이트 실패:', checkinError.message)
 
-  if (profile) {
-    let newStreak = 1
-    if (profile.last_checkin_date === today) {
-      newStreak = profile.checkin_streak // 오늘 이미 체크인
-    } else if (profile.last_checkin_date === yesterday) {
-      newStreak = profile.checkin_streak + 1 // 연속 체크인
-    }
-
-    await supabase
-      .from('profiles')
-      .update({ checkin_streak: newStreak, last_checkin_date: today })
-      .eq('id', user.id)
-  }
+  await updateStreak(supabase, user.id)
 
   revalidatePath('/dashboard')
 }

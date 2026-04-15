@@ -25,20 +25,18 @@ export async function getTodayStats(myTotal: number): Promise<TodayStats> {
 
   // 집계 데이터 없거나 유저 수 30명 미만이면 가상 데이터 혼합
   if (!aggregate || aggregate.total_users < 30) {
+    // amount만 조회 — user_id 등 개인 식별 정보 노출 방지
     const { data: realExpenses } = await supabase
       .from('expenses')
-      .select('user_id, amount')
+      .select('amount')
       .eq('spent_at', today)
 
-    // 유저별 오늘 지출 합계
-    const userTotals = new Map<string, number>()
-    for (const e of realExpenses ?? []) {
-      userTotals.set(e.user_id, (userTotals.get(e.user_id) ?? 0) + e.amount)
-    }
-
-    const realData = Array.from(userTotals.values())
+    // 집계는 개인 지출 합산 없이 금액 목록만 사용 (익명 집계)
+    const realData = (realExpenses ?? []).map(e => e.amount)
     const blended = blendDistribution(realData)
-    const avgTotal = Math.round(blended.reduce((s, v) => s + v, 0) / blended.length)
+    const avgTotal = blended.length > 0
+      ? Math.round(blended.reduce((s, v) => s + v, 0) / blended.length)
+      : 0
     const percentile = calcPercentile(myTotal, blended)
 
     return {
@@ -52,7 +50,19 @@ export async function getTodayStats(myTotal: number): Promise<TodayStats> {
 
   // 충분한 집계 데이터가 있을 때
   const avgTotal = Math.round(aggregate.avg_daily_total)
-  // daily_aggregates에 개별 분포가 없으므로 평균 기반 추정
+
+  // avgTotal이 0인 경우 (무지출 일수) 가드
+  if (avgTotal === 0) {
+    return {
+      myTotal,
+      avgTotal: 0,
+      percentile: myTotal === 0 ? 50 : 5,
+      totalUsers: aggregate.total_users,
+      isSimulated: false,
+    }
+  }
+
+  // 평균 기반 백분위 추정 (개별 분포 없을 때)
   const percentile = myTotal <= avgTotal
     ? Math.round(50 + ((avgTotal - myTotal) / avgTotal) * 40)
     : Math.max(5, Math.round(50 - ((myTotal - avgTotal) / avgTotal) * 40))

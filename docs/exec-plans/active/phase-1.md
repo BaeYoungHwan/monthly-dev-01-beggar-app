@@ -38,11 +38,18 @@
 
 ## 미완료 항목
 
-- [ ] 일일 예산 목표 설정 UI (현재 default 30,000원 고정)
-- [ ] 등급 변화 시 애니메이션/효과
-- [ ] "의심스러운 거지" 배지 (3일 이상 미체크인 접속 시)
-- [ ] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입
+- [x] 일일 예산 목표 설정 UI (`src/app/(app)/settings/page.tsx` + `actions/settings.ts`)
+- [x] 등급 변화 시 애니메이션/효과 (localStorage 기반 레벨업 감지 + 🎉 오버레이)
+- [x] "의심스러운 거지" 배지 (`src/components/SuspiciousBadge.tsx`)
+- [x] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입 (expense.ts buildNagPrompt)
 - [ ] 공유 카드 PNG 캡처 기능 (html2canvas — 승인 필요)
+
+## 보안 수정 (에이전트 리뷰 반영)
+- [x] `waitlist.ts` — 이메일 regex 검증 + personaId 화이트리스트 + upsert 전환
+- [x] `stats.ts` — user_id 제거 (amount만 집계), avgTotal 0 NaN 가드
+- [x] `expense.ts` — 금액 범위 검증 (1~1억), 카테고리 화이트리스트, streak 유틸 추출
+- [x] `checkin.ts` — checkin_type 런타임 검증, streak 유틸 추출
+- [x] `lib/streak/updateStreak.ts` — 중복 streak 로직 공통 유틸화
 
 ---
 

@@ -52,27 +52,27 @@
 ### 지출 대시보드
 - [x] 일간/주간 지출 합계 조회 — `src/app/actions/dashboard.ts`
 - [x] 지출 내역 리스트 컴포넌트 — `src/components/ExpenseList.tsx`
-- [ ] 일일 예산 목표 설정 UI
+- [x] 일일 예산 목표 설정 UI
 
 ### 거지 등급 시스템
 - [x] 등급 계산 로직: `(일일 예산 - 실지출) × 연속 체크인 일수`
 - [x] 등급 테이블 및 배지 데이터 정의 (Lv 0 파산핑 ~ Lv MAX 무소유의 화신)
 - [x] 등급 표시 컴포넌트 (캐릭터 이미지 + 칭호) — `src/components/GradeCard.tsx`
-- [ ] 등급 변화 시 애니메이션/효과
+- [x] 등급 변화 시 애니메이션/효과
 
 ### 어뷰징 방지 + 활동 신뢰 시스템
 - [x] 생존 신고 버튼 UI (`CheckinBanner.tsx`) — 오늘 체크인 없을 때만 노출
 - [x] `app/actions/checkin.ts` — 체크인 Server Action (no_spend / with_spend)
 - [x] 지출 입력 시 자동 체크인 연동 (`with_spend` 타입)
 - [x] AI 탐정 모드 — 오후 2시 이후 무체크인 접속 시 의심 잔소리 배너 — `src/components/DetectiveBanner.tsx`
-- [ ] "의심스러운 거지" 배지 (3일 이상 무체크인 접속 시)
+- [x] "의심스러운 거지" 배지 (3일 이상 무체크인 접속 시)
 
 ### 비교 통계 모듈
 - [x] `lib/grade/percentile.ts` — 백분위 계산 + 가상 데이터(30명 미만) 혼합 로직
 - [x] `app/actions/stats.ts` — 오늘 평균/백분위 Server Action
 - [x] 거지 백분위 표시 컴포넌트 ("상위 5% 청렴한 거지") — `src/components/PercentileCard.tsx`
 - [x] 전체 유저 평균 비교 표시 (평균 대비 +/- % 및 금액)
-- [ ] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입
+- [x] AI 잔소리 프롬프트에 백분위 + 평균 데이터 주입
 - [x] SNS 공유 카드 UI (백분위 + 등급 + 한 줄 잔소리) — `src/components/ShareCard.tsx`
 - [ ] 공유 카드 PNG 캡처 기능 (`html2canvas` 또는 `dom-to-image-more` — 추가 전 승인)
 

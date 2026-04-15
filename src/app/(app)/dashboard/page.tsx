@@ -7,6 +7,7 @@ import ExpenseList from '@/components/ExpenseList'
 import CheckinBanner from '@/components/CheckinBanner'
 import DetectiveBanner from '@/components/DetectiveBanner'
 import PercentileCard from '@/components/PercentileCard'
+import SuspiciousBadge from '@/components/SuspiciousBadge'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -24,8 +25,13 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-black">동결거지</h1>
           <p className="text-zinc-500 text-xs mt-0.5">{user.email}</p>
         </div>
-        <span className="text-3xl">🧎</span>
+        <Link href="/settings" className="text-zinc-400 hover:text-white transition-colors" aria-label="설정">
+          ⚙️
+        </Link>
       </div>
+
+      {/* 의심스러운 거지 배지 (3일 이상 미체크인) */}
+      <SuspiciousBadge lastCheckinDate={data.profile.last_checkin_date} />
 
       {/* AI 탐정 배너 (오후 2시 이후 + 미체크인) */}
       <DetectiveBanner hasCheckinToday={data.hasCheckinToday} />
