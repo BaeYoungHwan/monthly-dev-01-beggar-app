@@ -18,6 +18,20 @@ venv/
 # Node
 node_modules/
 .next/
+/out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+.vercel
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Certs
+*.pem
 
 # 로그
 logs/

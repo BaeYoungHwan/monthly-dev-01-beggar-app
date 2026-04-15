@@ -1,5 +1,6 @@
-# Claude Code 하네스 템플릿 — 지침 지도
+# monthly-dev-01-freeze-beggar (동결거지) — 지침 지도
 
+> AI의 독설과 게이미피케이션을 통해 사용자의 지출을 억제하고 자산을 보호하는 '초절약' 보조 앱
 > 이 파일은 ~100줄 지도입니다. 세부 규칙은 `docs/`에 있습니다.
 
 ---
@@ -72,7 +73,7 @@
 ## 프로젝트 구조
 
 ```
-[프로젝트명]/
+monthly-dev-01-freeze-beggar/
 ├── CLAUDE.md                  # 이 파일 (지침 지도)
 ├── TODO.md                    # 작업 목록
 ├── .claude/
@@ -86,7 +87,52 @@
 │   ├── exec-plans/            # 실행 계획 (active/completed)
 │   └── product-specs/         # PRD / 기획 문서
 ├── src/
+│   ├── app/                   # Next.js App Router
+│   ├── components/            # UI 컴포넌트
+│   ├── lib/                   # 유틸 / Supabase 클라이언트 / Gemini 클라이언트
+│   └── types/                 # TypeScript 타입 정의
 ├── tests/
 ├── logs/                      # gitignore 대상
-└── .env                       # gitignore 대상
+└── .env.local                 # gitignore 대상
 ```
+
+---
+
+## 프로젝트 맞춤 규칙
+
+> /init-project 에서 자동 생성됨. 이 프로젝트에만 적용됩니다.
+
+### Claude 행동 지침
+
+- 모든 코드는 TypeScript로 작성하고 타입 정의를 엄격히 할 것 (`strict: true`)
+- DB 스키마(Supabase/PostgreSQL) 변경 전에는 반드시 SQL 문을 미리 보여주고 승인을 받을 것
+- AI 페르소나 잔소리 프롬프트는 '기분 나쁜 비하'가 아닌 '재치 있고 킹받는 B급 감성'을 유지할 것
+
+### MVP 범위 제한
+
+> 아래 항목은 명시적 요청 없이 절대 구현하지 않습니다.
+
+- 지도 기반 '거지맵' 기능 (다음 달 고도화)
+- 소셜 로그인 (Google, GitHub 등)
+- 상세 자산 분석 및 통계 그래프
+- 실제 결제 연동 (Stripe, 토스페이먼츠 등) — 사업자 등록 전까지 구현 금지
+
+### 수익화 전략 (MVP 단계)
+
+> 실제 결제 대신 **구매 의향 데이터 수집**에 집중한다.
+
+- **Fake Door Test**: 유료 기능 클릭 시 "출시 알림 신청" 팝업 + 이메일 수집 (Waitlist)
+- **클릭 이벤트 로그**: 유료 기능 진입 횟수를 Supabase에 기록 → 전환율 근거 데이터
+- **커피 후원 링크**: 카카오페이 송금 링크 삽입 가능 (사업자 불필요)
+- 사업자 등록은 PG사 정산 요구 / 월 매출 유의미 / 비용 처리 필요 시점에 진행
+
+### 기술 스택 고정
+
+- **프레임워크**: Next.js 15 (App Router)
+- **스타일링**: Tailwind CSS
+- **백엔드/DB**: Supabase (PostgreSQL + RLS + Auth)
+- **AI**: Gemini 2.5 Flash (모델 확정 전까지 사용; 실제 최신 모델명 확인 후 교체)
+- **언어**: TypeScript (strict mode)
+- **배포**: Vercel + Supabase Free Tier
+
+다른 라이브러리/프레임워크 임의 도입 금지 — 추가 필요 시 반드시 먼저 물어볼 것
