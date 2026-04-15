@@ -28,7 +28,13 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // 비인증 유저가 보호된 경로 접근 시 로그인으로 리다이렉트
-  if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (
+    !user &&
+    (request.nextUrl.pathname.startsWith('/dashboard') ||
+      request.nextUrl.pathname.startsWith('/expense') ||
+      request.nextUrl.pathname.startsWith('/settings') ||
+      request.nextUrl.pathname.startsWith('/leaderboard'))
+  ) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -41,5 +47,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  matcher: ['/dashboard/:path*', '/expense/:path*', '/settings/:path*', '/leaderboard/:path*', '/login'],
 }
