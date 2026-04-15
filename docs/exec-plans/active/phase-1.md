@@ -78,12 +78,21 @@
 - [x] `NagResult.tsx` — 잔소리 공유 버튼 (navigator.share / clipboard)
 
 ## 미완료 (사용자 직접 필요)
-- [ ] Vercel 환경변수: `CRON_SECRET` 설정
+- [ ] Vercel 환경변수: `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` 설정
 - [ ] 모바일 실기기 테스트 (iOS Safari, Android Chrome)
-- [ ] html2canvas PNG 캡처 (승인 시 추가)
-- [ ] 고급 신뢰 시스템 (영수증 OCR 등) → P3
+- [ ] `develop → main` 머지 + Vercel Production 배포 (확인 후 진행)
+
+## P3 구현 완료 항목
+
+- [x] `src/app/actions/ocr.ts` — Gemini Vision API 영수증 OCR (금액/카테고리 추출)
+- [x] `src/app/(app)/expense/new/page.tsx` — 영수증 OCR 업로드 버튼 + 자동 채우기
+- [x] `src/app/actions/honesty.ts` — 정직도 점수 계산 (체크인 40% + 예산 40% + 안정성 20%)
+- [x] `src/components/HonestyScore.tsx` — 정직도 점수 서버 컴포넌트 (대시보드 표시)
+- [x] `src/components/ShareCard.tsx` — html2canvas PNG 저장 버튼 추가
 
 ## 관련 커밋
 
 - `e3a5600` — feat: P1 MVP 핵심 기능 전체 구현
 - `78bac13` — feat: P1 잔여 기능 + 보안 수정
+- `67f3d7d` — feat: P2 구현 — PWA + 리더보드 + 배치 + SNS 공유
+- `daba949` — feat: P3 — 영수증 OCR, 정직도 점수, PNG 캡처
