@@ -1,7 +1,9 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { calcPercentile, blendDistribution } from '@/lib/grade/percentile'
+import type { AgeGroup } from '@/types/profile'
 
 export interface TodayStats {
   myTotal: number
@@ -74,4 +76,76 @@ export async function getTodayStats(myTotal: number): Promise<TodayStats> {
     totalUsers: aggregate.total_users,
     isSimulated: false,
   }
+}
+
+export interface GroupStats {
+  groupAvg: number
+  percentile: number
+  groupSize: number
+  isSimulated: boolean
+}
+
+export async function getGroupStats(
+  myTotal: number,
+  neighborhood: string | null,
+  ageGroup: AgeGroup | null,
+): Promise<{ neighborhood: GroupStats | null; ageGroup: GroupStats | null }> {
+  if (!neighborhood && !ageGroup) return { neighborhood: null, ageGroup: null }
+
+  const admin = createAdminClient()
+  const today = new Date().toISOString().split('T')[0]!
+
+  async function fetchGroupStats(
+    filterField: 'neighborhood' | 'age_group',
+    filterValue: string,
+  ): Promise<GroupStats> {
+    // 해당 그룹 user_id 목록 (amount만 조회, 개인정보 최소화)
+    const { data: groupProfiles } = await admin
+      .from('profiles')
+      .select('id')
+      .eq(filterField, filterValue)
+
+    if (!groupProfiles || groupProfiles.length === 0) {
+      const blended = blendDistribution([])
+      return {
+        groupAvg: Math.round(blended.reduce((s, v) => s + v, 0) / blended.length),
+        percentile: calcPercentile(myTotal, blended),
+        groupSize: 0,
+        isSimulated: true,
+      }
+    }
+
+    const userIds = groupProfiles.map(p => p.id)
+
+    const { data: expenses } = await admin
+      .from('expenses')
+      .select('user_id, amount')
+      .eq('spent_at', today)
+      .in('user_id', userIds)
+
+    // 유저별 합산
+    const userTotals = new Map<string, number>()
+    for (const uid of userIds) userTotals.set(uid, 0)
+    for (const e of expenses ?? []) {
+      userTotals.set(e.user_id, (userTotals.get(e.user_id) ?? 0) + e.amount)
+    }
+
+    const amounts = Array.from(userTotals.values())
+    const blended = blendDistribution(amounts)
+    const groupAvg = Math.round(blended.reduce((s, v) => s + v, 0) / blended.length)
+
+    return {
+      groupAvg,
+      percentile: calcPercentile(myTotal, blended),
+      groupSize: amounts.length,
+      isSimulated: amounts.length < 30,
+    }
+  }
+
+  const [neighborhoodStats, ageGroupStats] = await Promise.all([
+    neighborhood ? fetchGroupStats('neighborhood', neighborhood) : Promise.resolve(null),
+    ageGroup ? fetchGroupStats('age_group', ageGroup) : Promise.resolve(null),
+  ])
+
+  return { neighborhood: neighborhoodStats, ageGroup: ageGroupStats }
 }

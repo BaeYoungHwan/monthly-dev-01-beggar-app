@@ -8,6 +8,8 @@ export interface DashboardData {
     daily_budget: number
     checkin_streak: number
     last_checkin_date: string | null
+    neighborhood: string | null
+    age_group: string | null
   }
   todayTotal: number
   weekTotal: number
@@ -29,7 +31,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     await Promise.all([
       supabase
         .from('profiles')
-        .select('daily_budget, checkin_streak, last_checkin_date')
+        .select('daily_budget, checkin_streak, last_checkin_date, neighborhood, age_group')
         .eq('id', user.id)
         .single(),
 
@@ -59,6 +61,8 @@ export async function getDashboardData(): Promise<DashboardData> {
     daily_budget: 30000,
     checkin_streak: 0,
     last_checkin_date: null,
+    neighborhood: null,
+    age_group: null,
   }
 
   const todayExpenses = (todayExpensesResult.data ?? []) as Expense[]

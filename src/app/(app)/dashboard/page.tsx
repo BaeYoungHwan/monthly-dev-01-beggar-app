@@ -27,6 +27,9 @@ export default async function DashboardPage() {
           <p className="text-zinc-500 text-xs mt-0.5">{user.email}</p>
         </div>
         <div className="flex items-center gap-3">
+          <Link href="/stats" className="text-zinc-400 hover:text-white transition-colors" aria-label="통계">
+            📊
+          </Link>
           <Link href="/leaderboard" className="text-zinc-400 hover:text-white transition-colors" aria-label="리더보드">
             🏆
           </Link>
@@ -53,7 +56,11 @@ export default async function DashboardPage() {
       />
 
       {/* 비교 통계 */}
-      <PercentileCard todayTotal={data.todayTotal} />
+      <PercentileCard
+        todayTotal={data.todayTotal}
+        neighborhood={data.profile.neighborhood}
+        ageGroup={data.profile.age_group}
+      />
 
       {/* 정직도 점수 */}
       <HonestyScore />
