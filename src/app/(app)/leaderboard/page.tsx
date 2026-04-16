@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getLeaderboard } from '@/app/actions/leaderboard'
 import LeaderboardCard from '@/components/LeaderboardCard'
-import NeighborhoodMap from '@/components/NeighborhoodMap'
+import NeighborhoodTips from '@/components/NeighborhoodTips'
+import TipSubmitButton from '@/components/TipSubmitButton'
 
 interface Props {
   searchParams: Promise<{ tab?: string }>
@@ -20,6 +22,17 @@ export default async function LeaderboardPage({ searchParams }: Props) {
 
   const data = activeTab === 'leaderboard' ? await getLeaderboard() : null
 
+  // 내 동네 (제보 폼 기본값 용도)
+  let myNeighborhood: string | null = null
+  if (activeTab === 'map') {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('neighborhood')
+      .eq('id', user.id)
+      .single()
+    myNeighborhood = profile?.neighborhood ?? null
+  }
+
   return (
     <div className="flex flex-col min-h-screen px-6 pt-12 pb-8 gap-6">
       {/* 헤더 */}
@@ -32,7 +45,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
             {activeTab === 'map' ? '거지맵' : '리더보드'}
           </h1>
           <p className="text-xs text-zinc-500">
-            {activeTab === 'map' ? '동네별 절약 랭킹' : '최근 7일 순위'}
+            {activeTab === 'map' ? '거지들이 직접 발굴한 가성비 꿀팁' : '최근 7일 순위'}
           </p>
         </div>
       </div>
@@ -61,7 +74,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      {/* 탭 콘텐츠 */}
+      {/* 리더보드 탭 */}
       {activeTab === 'leaderboard' && data && (
         <>
           <LeaderboardCard
@@ -78,7 +91,20 @@ export default async function LeaderboardPage({ searchParams }: Props) {
         </>
       )}
 
-      {activeTab === 'map' && <NeighborhoodMap />}
+      {/* 거지맵 탭 */}
+      {activeTab === 'map' && (
+        <>
+          {/* 제보 버튼 */}
+          <TipSubmitButton defaultNeighborhood={myNeighborhood} />
+
+          {/* 팁 리스트 */}
+          <Suspense fallback={
+            <div className="flex justify-center py-8 text-zinc-600 text-sm">불러오는 중...</div>
+          }>
+            <NeighborhoodTips />
+          </Suspense>
+        </>
+      )}
     </div>
   )
 }
